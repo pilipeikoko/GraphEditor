@@ -37,56 +37,47 @@ public class ComponentMenuBarThread extends Thread {
             JButton changeIdentifierButton = new JButton("Change identifier");
             JButton removeObjectButton = new JButton("Remove object");
 
-            changeIdentifierButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    getIdentifierFrame = new JFrame("Set identifier");
-                    getIdentifierFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                    getIdentifierFrame.setResizable(false);
-                    getIdentifierFrame.setLayout(new GridLayout(2,0));
-                    getIdentifierFrame.setPreferredSize(new Dimension(200,100));
-                    getIdentifierFrame.setVisible(true);
+            changeIdentifierButton.addActionListener(e -> {
+                getIdentifierFrame = new JFrame("Set identifier");
+                getIdentifierFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                getIdentifierFrame.setResizable(false);
+                getIdentifierFrame.setLayout(new GridLayout(2,0));
+                getIdentifierFrame.setPreferredSize(new Dimension(200,100));
+                getIdentifierFrame.setVisible(true);
 
-                    JButton OKButton = new JButton("Ok");
+                JButton OKButton = new JButton("Ok");
 
 
-                    JTextField textField = new JTextField("");
-                    textField.setSize(180,80);
-                    getIdentifierFrame.add(textField);
-                    getIdentifierFrame.add(OKButton);
-                    getIdentifierFrame.pack();
+                JTextField textField = new JTextField("");
+                textField.setSize(180,80);
+                getIdentifierFrame.add(textField);
+                getIdentifierFrame.add(OKButton);
+                getIdentifierFrame.pack();
 
-                    OKButton.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            drawableJPanel.componentMenuBarThread.disable();
-                            getIdentifierFrame.dispose();
+                OKButton.addActionListener(e1 -> {
+                    drawableJPanel.componentMenuBarThread.disable();
+                    getIdentifierFrame.dispose();
 
-                            Point point = ((Circle) drawableJPanel.chosenComponent).point;
+                    Point point = ((Circle) drawableJPanel.chosenComponent).point;
 
-                            Vertex vertex;
-                            for(int i=0;i<drawableJPanel.graph.setOfVertexes.size();++i){
-                                vertex = drawableJPanel.graph.setOfVertexes.get(i);
-                                if(vertex.point.equals(point)){
-                                    drawableJPanel.graph.setOfVertexes.get(i).setIdentifier(textField.getText());
-                                    ((Circle) drawableJPanel.chosenComponent).setIdentifier(textField.getText());
-                                    break;
-                                }
-                            }
-                            drawableJPanel.revalidate();
-                            drawableJPanel.repaint();
+                    Vertex vertex;
+                    for(int i=0;i<drawableJPanel.graph.setOfVertexes.size();++i){
+                        vertex = drawableJPanel.graph.setOfVertexes.get(i);
+                        if(vertex.point.equals(point)){
+                            drawableJPanel.graph.setOfVertexes.get(i).setIdentifier(textField.getText());
+                            ((Circle) drawableJPanel.chosenComponent).setIdentifier(textField.getText());
+                            break;
                         }
-                    });
+                    }
+                    drawableJPanel.revalidate();
+                    drawableJPanel.repaint();
+                });
 
-                }
             });
 
-            removeObjectButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    drawableJPanel.deleteChosenComponent();
-                    drawableJPanel.componentMenuBarThread.disable();
-                }
+            removeObjectButton.addActionListener(e -> {
+                drawableJPanel.deleteChosenComponent();
+                drawableJPanel.componentMenuBarThread.disable();
             });
 
             componentMenuBar.add(changeIdentifierButton);
@@ -96,62 +87,52 @@ public class ComponentMenuBarThread extends Thread {
             JButton changeWeightButton = new JButton("Change weight");
             JButton removeObjectButton = new JButton("Remove object");
 
-            changeWeightButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    JFrame getWeightFrame = new JFrame("Set identifier");
-                    getWeightFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                    getWeightFrame.setResizable(false);
-                    getWeightFrame.setLayout(new GridLayout(2,0));
-                    getWeightFrame.setPreferredSize(new Dimension(200,100));
-                    getWeightFrame.setVisible(true);
+            changeWeightButton.addActionListener(e -> {
+                JFrame getWeightFrame = new JFrame("Set identifier");
+                getWeightFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                getWeightFrame.setResizable(false);
+                getWeightFrame.setLayout(new GridLayout(2,0));
+                getWeightFrame.setPreferredSize(new Dimension(200,100));
+                getWeightFrame.setVisible(true);
 
-                    JButton OKButton = new JButton("Ok");
+                JButton OKButton = new JButton("Ok");
 
-                    JTextField textField = new JTextField("");
-                    textField.setSize(180,80);
-                    getWeightFrame.add(textField);
-                    getWeightFrame.add(OKButton);
-                    getWeightFrame.pack();
+                JTextField textField = new JTextField("");
+                textField.setSize(180,80);
+                getWeightFrame.add(textField);
+                getWeightFrame.add(OKButton);
+                getWeightFrame.pack();
 
-                    OKButton.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            drawableJPanel.componentMenuBarThread.disable();
+                OKButton.addActionListener(e12 -> {
+                    drawableJPanel.componentMenuBarThread.disable();
 
-                            Point sourcePoint = ((NonOrientedArrow) drawableJPanel.chosenComponent).sourcePoint;
-                            Point targetPoint = ((NonOrientedArrow) drawableJPanel.chosenComponent).targetPoint;
+                    Point sourcePoint = ((NonOrientedArrow) drawableJPanel.chosenComponent).sourcePoint;
+                    Point targetPoint = ((NonOrientedArrow) drawableJPanel.chosenComponent).targetPoint;
 
-                            for (int i = 0; i < drawableJPanel.graph.setOfArcs.size(); ++i) {
-                                if (drawableJPanel.graph.setOfArcs.get(i).sourcePoint == sourcePoint
-                                        && drawableJPanel.graph.setOfArcs.get(i).targetPoint == targetPoint){
-                                    String a = new String(textField.getText());
-                                    try {
-                                        drawableJPanel.graph.setOfArcs.get(i).weight = Integer.parseInt(textField.getText());
-                                        ((NonOrientedArrow) drawableJPanel.chosenComponent).setWeight(Integer.parseInt(textField.getText()));
-                                    } catch (NumberFormatException exception){
-                                        drawableJPanel.graph.setOfArcs.get(i).weight = 1;
-                                        ((NonOrientedArrow) drawableJPanel.chosenComponent).setWeight(1);
-                                    }
-                                    break;
-                                }
+                    for (int i = 0; i < drawableJPanel.graph.setOfArcs.size(); ++i) {
+                        if (drawableJPanel.graph.setOfArcs.get(i).sourcePoint == sourcePoint
+                                && drawableJPanel.graph.setOfArcs.get(i).targetPoint == targetPoint){
+                            try {
+                                drawableJPanel.graph.setOfArcs.get(i).weight = Integer.parseInt(textField.getText());
+                                ((NonOrientedArrow) drawableJPanel.chosenComponent).setWeight(Integer.parseInt(textField.getText()));
+                            } catch (NumberFormatException exception){
+                                drawableJPanel.graph.setOfArcs.get(i).weight = 1;
+                                ((NonOrientedArrow) drawableJPanel.chosenComponent).setWeight(1);
                             }
-
-                            getWeightFrame.dispose();
-                            drawableJPanel.revalidate();
-                            drawableJPanel.repaint();
+                            break;
                         }
-                    });
+                    }
 
-                }
+                    getWeightFrame.dispose();
+                    drawableJPanel.revalidate();
+                    drawableJPanel.repaint();
+                });
+
             });
 
-            removeObjectButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    drawableJPanel.deleteChosenComponent();
-                    drawableJPanel.componentMenuBarThread.disable();
-                }
+            removeObjectButton.addActionListener(e -> {
+                drawableJPanel.deleteChosenComponent();
+                drawableJPanel.componentMenuBarThread.disable();
             });
 
 

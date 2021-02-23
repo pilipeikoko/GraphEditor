@@ -14,6 +14,9 @@ public class OrientedArrow extends NonOrientedArrow {
     public OrientedArrow(Point sourcePoint, Point targetPoint) {
         super(sourcePoint, targetPoint);
     }
+    public OrientedArrow(Point sourcePoint, Point targetPoint,int weight) {
+        super(sourcePoint, targetPoint,weight);
+    }
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -54,7 +57,7 @@ public class OrientedArrow extends NonOrientedArrow {
             targetDy = targetPoint.y;
             drawArrowLine(g2, sourceDx, sourceDy, targetDx, targetDy, 10, 5);
         }
-        line = new Line2D.Double(sourcePoint.x,sourcePoint.y,targetPoint.x,targetPoint.y);
+        line = new Line2D.Double(sourcePoint.x, sourcePoint.y, targetPoint.x, targetPoint.y);
 
 
         int differenceY = sourcePoint.y > targetPoint.y ? 10 : -10;
@@ -86,7 +89,7 @@ public class OrientedArrow extends NonOrientedArrow {
 
         int[] xpoints = {x2, (int) xFirst, (int) xSecond};
         int[] ypoints = {y2, (int) yFirst, (int) ySecond};
-        line = new Line2D.Double(x1,y1,x2,y2);
+        line = new Line2D.Double(x1, y1, x2, y2);
         g.draw(line);
         g.fillPolygon(xpoints, ypoints, 3);
     }

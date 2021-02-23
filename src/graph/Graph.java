@@ -15,6 +15,9 @@ public class Graph {
     public void addVertex(Point point) {
         setOfVertexes.add(new Vertex(point));
     }
+    public void addVertex(Point point,String identifier) {
+        setOfVertexes.add(new Vertex(point,identifier));
+    }
 
     public void removeVertex(Point point) {
         Vertex vertex;
@@ -41,8 +44,8 @@ public class Graph {
     }
 
 
-    public void addArc(Arc triplet) {
-        setOfArcs.add(triplet);
+    public void addArc(Arc arc) {
+        setOfArcs.add(arc);
     }
 
     public void removeArc(Point sourcePoint, Point targetPoint) {
@@ -54,4 +57,5 @@ public class Graph {
             }
         }
     }
+
 }

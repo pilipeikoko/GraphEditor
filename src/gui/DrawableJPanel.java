@@ -28,28 +28,25 @@ public class DrawableJPanel extends JPanel implements  MouseListener {
 
     Component chosenComponent;
     boolean isComponentChosen = false;
-    JScrollPane scrollPane;
 
     public DrawableJPanel(MainGUI gui) {
 
-        setBorder(BorderFactory.createLineBorder(Color.red));
-
         this.gui = gui;
-
         this.setLayout(null);
-
-        actionType = gui.actionType;
-
         this.addMouseListener(this);
 
         addKeyActionMap();
 
+        actionType = gui.actionType;
+
+        setBorder(BorderFactory.createLineBorder(Color.red));
     }
 
     private void addKeyActionMap() {
+
         //ESC kill threads
         Object delete = new Object();
-        this.getInputMap().put(KeyStroke.getKeyStroke("D"), delete);
+        this.getInputMap().put(KeyStroke.getKeyStroke("DELETE"), delete);
         this.getActionMap().put(delete, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -87,7 +84,6 @@ public class DrawableJPanel extends JPanel implements  MouseListener {
             public void actionPerformed(ActionEvent e) {
                 killThreads();
                 gui.actionType = ActionType.MAKENOTORIENTEDARC;
-                check();
             }
         });
 
@@ -102,6 +98,16 @@ public class DrawableJPanel extends JPanel implements  MouseListener {
                 showMenuForChosenComponent();
                 revalidate();
                 repaint();
+            }
+        });
+
+        Object clickESC = new Object();
+        this.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), clickESC);
+        this.getActionMap().put(clickESC, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                killThreads();
+                killMenuThread();
             }
         });
     }
@@ -138,7 +144,6 @@ public class DrawableJPanel extends JPanel implements  MouseListener {
                 Point point = ((Circle) chosenComponent).point;
                 graph.removeVertex(point);
                 removeIncidentalArcs(point);
-                // Here should be removed incidental arcs
             } else if (chosenComponent instanceof NonOrientedArrow) {
                 Point sourcePoint = ((NonOrientedArrow) chosenComponent).sourcePoint;
                 Point targetPoint = ((NonOrientedArrow) chosenComponent).targetPoint;
@@ -207,8 +212,7 @@ public class DrawableJPanel extends JPanel implements  MouseListener {
                     return i;
                 }
             } else if (component instanceof NonOrientedArrow) {
-                Line2D line = (Line2D) ((NonOrientedArrow) component).line;
-                System.out.println(line.ptSegDist(currentPoint));
+                Line2D line = ((NonOrientedArrow) component).line;
                 if (line.ptSegDist(currentPoint) < 10) {
                     return i;
                 }
@@ -218,6 +222,19 @@ public class DrawableJPanel extends JPanel implements  MouseListener {
         return -1;
     }
 
+    void createVertex(int x,int y, String identifier){
+        this.grabFocus();
+
+        Point point = new Point(x, y);
+        Circle circle = new Circle(point);
+        circle.setIdentifier(identifier);
+
+        this.add(circle);
+        graph.addVertex(point,identifier);
+
+        rejectComponent();
+        chooseComponent(circle);
+    }
 
     private void createVertex() {
         int x = getMousePosition().x;
@@ -239,8 +256,8 @@ public class DrawableJPanel extends JPanel implements  MouseListener {
     private void rejectComponent() {
         isComponentChosen = false;
         if (chosenComponent instanceof Circle) {
-            Circle circl = (Circle) chosenComponent;
-            circl.rejectObject();
+            Circle circle = (Circle) chosenComponent;
+            circle.rejectObject();
         } else if (chosenComponent instanceof NonOrientedArrow) {
             NonOrientedArrow nonOrientedArrow = (NonOrientedArrow) chosenComponent;
             nonOrientedArrow.rejectObject();
@@ -270,7 +287,6 @@ public class DrawableJPanel extends JPanel implements  MouseListener {
             circleMoveThread.disable();
         } else if (notOrientedArcMakeThread != null && notOrientedArcMakeThread.isAlive()) {
             notOrientedArcMakeThread.disable();
-            //mb gui.
             actionType = ActionType.MAKEVERTEX;
         } else if (orientedArcMakeThread != null && orientedArcMakeThread.isAlive()) {
             orientedArcMakeThread.disable();
@@ -283,19 +299,14 @@ public class DrawableJPanel extends JPanel implements  MouseListener {
             componentMenuBarThread = new ComponentMenuBarThread(this);
             componentMenuBarThread.start();
 
-
             try {
                 sleep(20);
-               // add(componentMenuBarThread.componentMenuBar);
 
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            } catch (InterruptedException ignored) {
+
             }
-//
         }
-
     }
-
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -342,12 +353,8 @@ public class DrawableJPanel extends JPanel implements  MouseListener {
                     createVertex();
                 }
             }
-            case MAKENOTORIENTEDARC -> {
-                createNotOrientedArrow();
-            }
-            case MAKEORIENTEDARC -> {
-                createOrientedArrow();
-            }
+            case MAKENOTORIENTEDARC -> createNotOrientedArrow();
+            case MAKEORIENTEDARC -> createOrientedArrow();
         }
     }
 
@@ -365,6 +372,19 @@ public class DrawableJPanel extends JPanel implements  MouseListener {
         }
     }
 
+    Point findTarget(int x,int y){
+        Point point = new Point(x,y);
+        for (int i = 0; i < this.getComponentCount(); i++) {
+            if (this.getComponent(i) instanceof Circle) {
+                Circle circle = (Circle) this.getComponent(i);
+                if(circle.point.equals(point)){
+                    return circle.point;
+                }
+            }
+        }
+        return null;
+    }
+
 
     @Override
     public void mouseReleased(MouseEvent e) {
@@ -379,11 +399,6 @@ public class DrawableJPanel extends JPanel implements  MouseListener {
     @Override
     public void mouseExited(MouseEvent e) {
         killThreads();
-    }
-
-    private void check(){
-        System.out.println(this.getComponentCount());
-        System.out.println(graph.setOfArcs.size()+graph.setOfVertexes.size());
     }
 
 }

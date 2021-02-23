@@ -8,11 +8,16 @@ public class Vertex {
 
     Vertex(Point point) {
         this.point = point;
-        this.identifier = new String("");
+        this.identifier = "";
+    }
+
+    Vertex(Point point, String identifier){
+        this.point = point;
+        this.identifier = identifier;
     }
 
     public void setIdentifier(String identifier){
-        this.identifier = new String(identifier);
+        this.identifier = identifier;
     }
 
 

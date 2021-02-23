@@ -7,7 +7,7 @@ public class Arc {
     public Point sourcePoint;
     public Point targetPoint;
     public boolean isDirected;
-    public double weight = 1;
+    public int weight = 1;
 
     public Arc(){
 
@@ -17,12 +17,18 @@ public class Arc {
         this.isDirected = isDirected;
         this.sourcePoint = sourcePoint;
         this.targetPoint = targetPoint;
-//        this.sourcePoint = new Point(sourcePoint);
-//        this.targetPoint = new Point(targetPoint);
+    }
+    public Arc(Point sourcePoint, Point targetPoint, boolean isDirected, int weight){
+        this.isDirected = isDirected;
+        this.sourcePoint = sourcePoint;
+        this.targetPoint = targetPoint;
+        this.weight = weight;
     }
 
 
-    public void changeWeight(double newWeight){
+
+
+    public void changeWeight(int newWeight){
         this.weight=newWeight;
     }
 

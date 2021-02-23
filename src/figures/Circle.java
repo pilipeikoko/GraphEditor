@@ -7,32 +7,32 @@ public class Circle extends JPanel {
     public final static int radius = 12;
     public Point point;
     private Color color;
-    String identifier;
+    private String identifier;
 
     public Circle(Point point) {
         this.point = point;
         this.color = Color.black;
-        this.identifier = new String("");
+        this.identifier = "";
     }
 
     public void draw(Graphics g) {
-        Graphics2D g2 = (Graphics2D)g;
+        Graphics2D g2 = (Graphics2D) g;
         g2.setStroke(new BasicStroke(3));
         g2.setColor(color);
-        g2.drawOval(point.x-radius, point.y-radius, 2*radius, 2*radius);
-        g2.drawString(identifier,point.x+15,point.y+15);
+        g2.drawOval(point.x - radius, point.y - radius, 2 * radius, 2 * radius);
+        g2.drawString(identifier, point.x + 15, point.y + 15);
     }
 
-    public void chooseObject(){
+    public void chooseObject() {
         this.color = Color.green;
     }
 
-    public void rejectObject(){
+    public void rejectObject() {
         this.color = Color.black;
     }
 
-    public void setIdentifier(String identifier){
-        this.identifier = new String(identifier);
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 
 

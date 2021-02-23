@@ -7,10 +7,10 @@ import graph.Arc;
 import javax.swing.*;
 import java.awt.*;
 
-public class OrientedArcMakeThread extends NotOrientedArcMakeThread{
+public class OrientedArcMakeThread extends NotOrientedArcMakeThread {
 
-    OrientedArcMakeThread(DrawableJPanel jpanel, Point point){
-        super(jpanel,point);
+    OrientedArcMakeThread(DrawableJPanel jpanel, Point point) {
+        super(jpanel, point);
     }
 
     @Override
@@ -21,12 +21,18 @@ public class OrientedArcMakeThread extends NotOrientedArcMakeThread{
         OrientedArrow arrow = new OrientedArrow(sourcePoint, targetPoint);
         jPanel.add(arrow);
         while (isActive) {
-            x = jPanel.getMousePosition().x ;
-            y = jPanel.getMousePosition().y ;
-            targetPoint.x = x;
-            targetPoint.y = y;
-            jPanel.revalidate();
-            jPanel.repaint();
+            try {
+                x = jPanel.getMousePosition().x;
+                y = jPanel.getMousePosition().y;
+                targetPoint.x = x;
+                targetPoint.y = y;
+                jPanel.revalidate();
+                jPanel.repaint();
+            } catch (NullPointerException e){
+                jPanel.remove(arrow);
+                interrupt();
+                return;
+            }
         }
         Point target = jPanel.findTargetAtComponents();
         if (target == null) {
@@ -34,13 +40,14 @@ public class OrientedArcMakeThread extends NotOrientedArcMakeThread{
             interrupt();
             return;
         }
-        jPanel.remove(jPanel.getComponent(jPanel.getComponentCount()-1));
-        arrow = new OrientedArrow(sourcePoint,target);
+        jPanel.remove(jPanel.getComponent(jPanel.getComponentCount() - 1));
+        arrow = new OrientedArrow(sourcePoint, target);
         jPanel.add(arrow);
         arrow.changeTarget(target);
         Arc quadruplet = new Arc(sourcePoint, target, true);
         jPanel.graph.addArc(quadruplet);
         interrupt();
     }
+
 
 }

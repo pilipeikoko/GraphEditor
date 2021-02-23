@@ -26,12 +26,18 @@ public class NotOrientedArcMakeThread extends Thread{
         NonOrientedArrow arrow = new NonOrientedArrow(sourcePoint, targetPoint);
         jPanel.add(arrow);
         while (isActive) {
-            x = jPanel.getMousePosition().x ;
-            y = jPanel.getMousePosition().y ;
-            targetPoint.x = x;
-            targetPoint.y = y;
-            jPanel.revalidate();
-            jPanel.repaint();
+            try {
+                x = jPanel.getMousePosition().x;
+                y = jPanel.getMousePosition().y;
+                targetPoint.x = x;
+                targetPoint.y = y;
+                jPanel.revalidate();
+                jPanel.repaint();
+            }catch (NullPointerException e){
+                jPanel.remove(arrow);
+                interrupt();
+                return;
+            }
         }
         Point target = jPanel.findTarget();
         if (target == null) {

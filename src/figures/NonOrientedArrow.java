@@ -1,22 +1,19 @@
 package figures;
 
-import com.sun.jdi.PrimitiveValue;
-
-import javax.sound.sampled.Line;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Line2D;
 
 public class NonOrientedArrow extends JPanel {
+    protected static int radius = Circle.radius;
+    protected Color color;
+    protected boolean isFinish = false;
+
     public Line2D line;
     public Point sourcePoint;
     public Point targetPoint;
-    protected Color color;
-    protected static int radius = Circle.radius;
-    int weight;
-    protected boolean isFinish = false;
 
-    private Point coordinatesToPrint;
+    int weight;
 
     public NonOrientedArrow() {
 
@@ -27,6 +24,14 @@ public class NonOrientedArrow extends JPanel {
         this.targetPoint = targetPoint;
         this.color = Color.black;
         this.weight = 1;
+    }
+
+    public NonOrientedArrow(Point sourcePoint, Point targetPoint,int weight) {
+        this.sourcePoint = sourcePoint;
+        this.targetPoint = targetPoint;
+        this.color = Color.black;
+        this.weight = weight;
+        isFinish = true;
     }
 
     public void draw(Graphics g) {
@@ -56,8 +61,8 @@ public class NonOrientedArrow extends JPanel {
             targetDy = sourcePoint.y > targetPoint.y ? targetPoint.y + radius : targetPoint.y - radius;
             targetDx = targetPoint.x;
         }
-        if(isFinish)
-            line = new Line2D.Double(sourceDx, sourceDy,targetDx,targetDy);
+        if (isFinish)
+            line = new Line2D.Double(sourceDx, sourceDy, targetDx, targetDy);
         else
             line = new Line2D.Double(sourceDx, sourceDy, targetPoint.x, targetPoint.y);
 
@@ -76,7 +81,7 @@ public class NonOrientedArrow extends JPanel {
     }
 
     public void changeTarget(Point point) {
-        isFinish=true;
+        isFinish = true;
         this.targetPoint = point;
     }
 
