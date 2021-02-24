@@ -9,11 +9,13 @@ import graph.tasks.FindHamiltonsCycles;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class MainGUI extends JFrame {
+public class MainGUI extends JFrame implements ComponentListener {
 
     //TODO make window in middle
     //TODO handle exception circle move
@@ -26,9 +28,9 @@ public class MainGUI extends JFrame {
 
     private DrawableJPanel drawableJPanel;
 
-    JScrollPane scrollPane;
+    private JScrollPane scrollPane;
 
-    JToolBar toolbar;
+    private JToolBar toolbar;
 
     JMenuBar menuBar;
 
@@ -38,8 +40,9 @@ public class MainGUI extends JFrame {
 
         setLayout(null);
         this.setBounds(300, 60, 1000, 700);
-        this.setResizable(false);
+        this.setResizable(true);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.addComponentListener(this);
 
         addMenuBar();
         addToolBar();
@@ -319,4 +322,26 @@ public class MainGUI extends JFrame {
     }
 
 
+    @Override
+    public void componentResized(ComponentEvent e) {
+        toolbar.setSize(40,this.getHeight());
+        scrollPane.setSize(new Dimension(this.getWidth() - 60, this.getHeight() - 70));
+        revalidate();
+        repaint();
+    }
+
+    @Override
+    public void componentMoved(ComponentEvent e) {
+
+    }
+
+    @Override
+    public void componentShown(ComponentEvent e) {
+
+    }
+
+    @Override
+    public void componentHidden(ComponentEvent e) {
+
+    }
 }
