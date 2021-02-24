@@ -254,7 +254,7 @@ public class DrawableJPanel extends JPanel implements MouseListener {
     }
 
 
-    private void rejectComponent() {
+    void rejectComponent() {
         isComponentChosen = false;
         if (chosenComponent instanceof Circle) {
             Circle circle = (Circle) chosenComponent;

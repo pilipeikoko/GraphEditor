@@ -17,10 +17,14 @@ public class CircleMoveThread extends Thread {
 
     @Override
     public void run() {
-        while (isActive) {
-            point.move(jPanel.getMousePosition().x, jPanel.getMousePosition().y);
-            jPanel.revalidate();
-            jPanel.repaint();
+        try {
+            while (isActive) {
+                point.move(jPanel.getMousePosition().x, jPanel.getMousePosition().y);
+                jPanel.revalidate();
+                jPanel.repaint();
+            }
+        } catch (NullPointerException ignored){
+
         }
     }
 
