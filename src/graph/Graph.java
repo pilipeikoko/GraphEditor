@@ -1,7 +1,6 @@
 package graph;
 
 import java.awt.*;
-import java.awt.geom.Line2D;
 import java.util.ArrayList;
 
 public class Graph {
@@ -15,8 +14,9 @@ public class Graph {
     public void addVertex(Point point) {
         setOfVertexes.add(new Vertex(point));
     }
-    public void addVertex(Point point,String identifier) {
-        setOfVertexes.add(new Vertex(point,identifier));
+
+    public void addVertex(Point point, String identifier) {
+        setOfVertexes.add(new Vertex(point, identifier));
     }
 
     public void removeVertex(Point point) {
@@ -33,7 +33,7 @@ public class Graph {
     }
 
     private void removeAllIncidentalArcs(Point point) {
-        for (int i = 0; i < setOfArcs.size(); i++) {
+        for (int i = 0; i < setOfArcs.size(); ++i) {
             Arc currentArc = setOfArcs.get(i);
             if (currentArc.targetPoint != null && currentArc.sourcePoint != null
                     && (currentArc.sourcePoint.equals(point) || currentArc.targetPoint.equals(point))) {

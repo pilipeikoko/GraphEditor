@@ -11,23 +11,23 @@ import java.awt.geom.Line2D;
 
 import static java.lang.Thread.sleep;
 
-public class DrawableJPanel extends JPanel implements  MouseListener {
+public class DrawableJPanel extends JPanel implements MouseListener {
 
     final static int radius = Circle.radius;
 
-    MainGUI gui;
+    private final MainGUI gui;
 
-    Graph graph = new Graph();
+    final Graph graph = new Graph();
 
-    ActionType actionType;
+    private ActionType actionType;
 
-    CircleMoveThread circleMoveThread;
-    NotOrientedArcMakeThread notOrientedArcMakeThread;
-    OrientedArcMakeThread orientedArcMakeThread;
+    private CircleMoveThread circleMoveThread;
+    private NotOrientedArcMakeThread notOrientedArcMakeThread;
+    private OrientedArcMakeThread orientedArcMakeThread;
     ComponentMenuBarThread componentMenuBarThread;
 
     Component chosenComponent;
-    boolean isComponentChosen = false;
+    private boolean isComponentChosen = false;
 
     public DrawableJPanel(MainGUI gui) {
 
@@ -39,12 +39,11 @@ public class DrawableJPanel extends JPanel implements  MouseListener {
 
         actionType = gui.actionType;
 
-        setBorder(BorderFactory.createLineBorder(Color.red));
+        setBorder(BorderFactory.createLineBorder(Color.gray));
     }
 
     private void addKeyActionMap() {
 
-        //ESC kill threads
         Object delete = new Object();
         this.getInputMap().put(KeyStroke.getKeyStroke("DELETE"), delete);
         this.getActionMap().put(delete, new AbstractAction() {
@@ -137,7 +136,9 @@ public class DrawableJPanel extends JPanel implements  MouseListener {
         if (isComponentChosen) {
             int index = findIndexOfChosenTarget();
             this.remove(index);
+
             rejectComponent();
+
             isComponentChosen = false;
 
             if (chosenComponent instanceof Circle) {
@@ -154,11 +155,11 @@ public class DrawableJPanel extends JPanel implements  MouseListener {
     }
 
     private void removeIncidentalArcs(Point point) {
-        for(int i=0;i<this.getComponentCount();++i){
+        for (int i = 0; i < this.getComponentCount(); ++i) {
             Component component = this.getComponent(i);
-            if(component instanceof NonOrientedArrow
+            if (component instanceof NonOrientedArrow
                     && (((NonOrientedArrow) component).sourcePoint.equals(point)
-                    || ((NonOrientedArrow) component).targetPoint.equals(point))){
+                    || ((NonOrientedArrow) component).targetPoint.equals(point))) {
                 this.remove(i--);
             }
         }
@@ -187,18 +188,18 @@ public class DrawableJPanel extends JPanel implements  MouseListener {
         return null;
     }
 
-    Point findTargetAtComponents(){
+    Point findTargetAtComponents() {
         Point currentPoint = new Point(getMousePosition().x, getMousePosition().y);
-        for(int i=0;i<this.getComponentCount();++i){
+        for (int i = 0; i < this.getComponentCount(); ++i) {
             Component component = this.getComponent(i);
-            if(component instanceof Circle){
+            if (component instanceof Circle) {
                 Point point = ((Circle) component).point;
                 if (Math.abs(point.x - currentPoint.x) <= radius && Math.abs(point.y - currentPoint.y) <= radius) {
                     return point;
                 }
             }
         }
-        return  null;
+        return null;
     }
 
     private int findIndexOfTarget() {
@@ -222,7 +223,7 @@ public class DrawableJPanel extends JPanel implements  MouseListener {
         return -1;
     }
 
-    void createVertex(int x,int y, String identifier){
+    void createVertex(int x, int y, String identifier) {
         this.grabFocus();
 
         Point point = new Point(x, y);
@@ -230,7 +231,7 @@ public class DrawableJPanel extends JPanel implements  MouseListener {
         circle.setIdentifier(identifier);
 
         this.add(circle);
-        graph.addVertex(point,identifier);
+        graph.addVertex(point, identifier);
 
         rejectComponent();
         chooseComponent(circle);
@@ -266,7 +267,7 @@ public class DrawableJPanel extends JPanel implements  MouseListener {
         repaint();
     }
 
-    private void chooseComponent(Component component) {
+    void chooseComponent(Component component) {
         isComponentChosen = true;
         if (component instanceof Circle) {
             Circle circle = (Circle) component;
@@ -367,18 +368,32 @@ public class DrawableJPanel extends JPanel implements  MouseListener {
             moveVertex();
             changeChosenComponent();
 
+            //Right mouse clicked
             if (e.getButton() == 3)
                 showMenuForChosenComponent();
         }
     }
 
-    Point findTarget(int x,int y){
-        Point point = new Point(x,y);
+    Point findTarget(int x, int y) {
+        Point point = new Point(x, y);
         for (int i = 0; i < this.getComponentCount(); i++) {
             if (this.getComponent(i) instanceof Circle) {
                 Circle circle = (Circle) this.getComponent(i);
-                if(circle.point.equals(point)){
+                if (circle.point.equals(point)) {
                     return circle.point;
+                }
+            }
+        }
+        return null;
+    }
+
+    Circle findCircleTarget(int x, int y) {
+        Point point = new Point(x, y);
+        for (int i = 0; i < this.getComponentCount(); i++) {
+            if (this.getComponent(i) instanceof Circle) {
+                Circle circle = (Circle) this.getComponent(i);
+                if (circle.point.equals(point)) {
+                    return circle;
                 }
             }
         }

@@ -26,7 +26,7 @@ public class NonOrientedArrow extends JPanel {
         this.weight = 1;
     }
 
-    public NonOrientedArrow(Point sourcePoint, Point targetPoint,int weight) {
+    public NonOrientedArrow(Point sourcePoint, Point targetPoint, int weight) {
         this.sourcePoint = sourcePoint;
         this.targetPoint = targetPoint;
         this.color = Color.black;
@@ -35,9 +35,9 @@ public class NonOrientedArrow extends JPanel {
     }
 
     public void draw(Graphics g) {
-        Graphics2D g2 = (Graphics2D) g;
-        g2.setStroke(new BasicStroke(3));
-        g2.setColor(color);
+        Graphics2D graphics2D = (Graphics2D) g;
+        graphics2D.setStroke(new BasicStroke(3));
+        graphics2D.setColor(color);
 
         double k = (double) (targetPoint.y - sourcePoint.y) / (targetPoint.x - sourcePoint.x);
 
@@ -61,22 +61,23 @@ public class NonOrientedArrow extends JPanel {
             targetDy = sourcePoint.y > targetPoint.y ? targetPoint.y + radius : targetPoint.y - radius;
             targetDx = targetPoint.x;
         }
+
         if (isFinish)
             line = new Line2D.Double(sourceDx, sourceDy, targetDx, targetDy);
         else
             line = new Line2D.Double(sourceDx, sourceDy, targetPoint.x, targetPoint.y);
 
-        g2.draw(line);
-        g2.setColor(Color.red);
+        graphics2D.draw(line);
+        graphics2D.setColor(Color.red);
 
-        int diffirenceY = sourcePoint.y > targetPoint.y ? 10 : -10;
-        int diffirenceX = sourcePoint.x > targetPoint.x ? -10 : 10;
+        int differenceY = sourcePoint.y > targetPoint.y ? 10 : -10;
+        int differenceX = sourcePoint.x > targetPoint.x ? -10 : 10;
 
-        int midX = (targetPoint.x + sourcePoint.x) / 2 + diffirenceX;
-        int midY = (targetPoint.y + sourcePoint.y) / 2 + diffirenceY;
+        int midX = (targetPoint.x + sourcePoint.x) / 2 + differenceX;
+        int midY = (targetPoint.y + sourcePoint.y) / 2 + differenceY;
 
         if (weight != 1)
-            g2.drawString(String.valueOf(weight), midX, midY);
+            graphics2D.drawString(String.valueOf(weight), midX, midY);
 
     }
 

@@ -6,15 +6,13 @@ import graph.Vertex;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class ComponentMenuBarThread extends Thread {
 
-    JMenuBar componentMenuBar;
-    DrawableJPanel drawableJPanel;
-    static boolean isActive = false;
-    JFrame getIdentifierFrame;
+    private JMenuBar componentMenuBar;
+    private final DrawableJPanel drawableJPanel;
+    private boolean isActive = false;
+    private JFrame getIdentifierFrame;
 
     public ComponentMenuBarThread(DrawableJPanel panel) {
         this.drawableJPanel = panel;
@@ -22,124 +20,133 @@ public class ComponentMenuBarThread extends Thread {
 
     @Override
     public void run() {
-
         isActive = true;
 
-        componentMenuBar = new JMenuBar();
-
-        componentMenuBar.setFont(new Font("TimesRoman", Font.BOLD, 12));
-
+        Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
         LayoutManager grid = new GridLayout(2, 0);
+
+        componentMenuBar = new JMenuBar();
+        componentMenuBar.setFont(new Font("TimesRoman", Font.BOLD, 12));
         componentMenuBar.setLayout(grid);
         componentMenuBar.setBounds(drawableJPanel.getMousePosition().x + DrawableJPanel.radius, drawableJPanel.getMousePosition().y, 140, 50);
 
         if (drawableJPanel.chosenComponent instanceof Circle) {
+
             JButton changeIdentifierButton = new JButton("Change identifier");
             JButton removeObjectButton = new JButton("Remove object");
 
-            changeIdentifierButton.addActionListener(e -> {
-                getIdentifierFrame = new JFrame("Set identifier");
-                getIdentifierFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                getIdentifierFrame.setResizable(false);
-                getIdentifierFrame.setLayout(new GridLayout(2,0));
-                getIdentifierFrame.setPreferredSize(new Dimension(200,100));
-                getIdentifierFrame.setVisible(true);
+            changeIdentifierButton.addActionListener(e -> changeIdentifier(dimension));
 
-                JButton OKButton = new JButton("Ok");
-
-
-                JTextField textField = new JTextField("");
-                textField.setSize(180,80);
-                getIdentifierFrame.add(textField);
-                getIdentifierFrame.add(OKButton);
-                getIdentifierFrame.pack();
-
-                OKButton.addActionListener(e1 -> {
-                    drawableJPanel.componentMenuBarThread.disable();
-                    getIdentifierFrame.dispose();
-
-                    Point point = ((Circle) drawableJPanel.chosenComponent).point;
-
-                    Vertex vertex;
-                    for(int i=0;i<drawableJPanel.graph.setOfVertexes.size();++i){
-                        vertex = drawableJPanel.graph.setOfVertexes.get(i);
-                        if(vertex.point.equals(point)){
-                            drawableJPanel.graph.setOfVertexes.get(i).setIdentifier(textField.getText());
-                            ((Circle) drawableJPanel.chosenComponent).setIdentifier(textField.getText());
-                            break;
-                        }
-                    }
-                    drawableJPanel.revalidate();
-                    drawableJPanel.repaint();
-                });
-
-            });
-
-            removeObjectButton.addActionListener(e -> {
-                drawableJPanel.deleteChosenComponent();
-                drawableJPanel.componentMenuBarThread.disable();
-            });
+            removeObjectButton.addActionListener(e -> deleteComponent());
 
             componentMenuBar.add(changeIdentifierButton);
             componentMenuBar.add(removeObjectButton);
+
         } else if (drawableJPanel.chosenComponent instanceof NonOrientedArrow) {
 
             JButton changeWeightButton = new JButton("Change weight");
             JButton removeObjectButton = new JButton("Remove object");
 
-            changeWeightButton.addActionListener(e -> {
-                JFrame getWeightFrame = new JFrame("Set identifier");
-                getWeightFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                getWeightFrame.setResizable(false);
-                getWeightFrame.setLayout(new GridLayout(2,0));
-                getWeightFrame.setPreferredSize(new Dimension(200,100));
-                getWeightFrame.setVisible(true);
+            changeWeightButton.addActionListener(e -> changeWeight(dimension));
 
-                JButton OKButton = new JButton("Ok");
-
-                JTextField textField = new JTextField("");
-                textField.setSize(180,80);
-                getWeightFrame.add(textField);
-                getWeightFrame.add(OKButton);
-                getWeightFrame.pack();
-
-                OKButton.addActionListener(e12 -> {
-                    drawableJPanel.componentMenuBarThread.disable();
-
-                    Point sourcePoint = ((NonOrientedArrow) drawableJPanel.chosenComponent).sourcePoint;
-                    Point targetPoint = ((NonOrientedArrow) drawableJPanel.chosenComponent).targetPoint;
-
-                    for (int i = 0; i < drawableJPanel.graph.setOfArcs.size(); ++i) {
-                        if (drawableJPanel.graph.setOfArcs.get(i).sourcePoint == sourcePoint
-                                && drawableJPanel.graph.setOfArcs.get(i).targetPoint == targetPoint){
-                            try {
-                                drawableJPanel.graph.setOfArcs.get(i).weight = Integer.parseInt(textField.getText());
-                                ((NonOrientedArrow) drawableJPanel.chosenComponent).setWeight(Integer.parseInt(textField.getText()));
-                            } catch (NumberFormatException exception){
-                                drawableJPanel.graph.setOfArcs.get(i).weight = 1;
-                                ((NonOrientedArrow) drawableJPanel.chosenComponent).setWeight(1);
-                            }
-                            break;
-                        }
-                    }
-
-                    getWeightFrame.dispose();
-                    drawableJPanel.revalidate();
-                    drawableJPanel.repaint();
-                });
-
-            });
-
-            removeObjectButton.addActionListener(e -> {
-                drawableJPanel.deleteChosenComponent();
-                drawableJPanel.componentMenuBarThread.disable();
-            });
-
+            removeObjectButton.addActionListener(e -> deleteComponent());
 
             componentMenuBar.add(changeWeightButton);
             componentMenuBar.add(removeObjectButton);
+
         }
         drawableJPanel.add(componentMenuBar);
+
+    }
+
+    private void changeWeight(Dimension dimension) {
+        JFrame getWeightFrame = new JFrame("Set identifier");
+        getWeightFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        getWeightFrame.setResizable(false);
+        getWeightFrame.setLayout(new GridLayout(2, 0));
+        getWeightFrame.setPreferredSize(new Dimension(200, 100));
+        getWeightFrame.setVisible(true);
+        getWeightFrame.setLocation(dimension.width / 2 - 50, dimension.height / 2 - 50);
+
+        JButton OKButton = new JButton("Ok");
+        JTextField textField = new JTextField("");
+
+        textField.setSize(180, 80);
+
+        getWeightFrame.add(textField);
+        getWeightFrame.add(OKButton);
+        getWeightFrame.pack();
+
+        OKButton.addActionListener(e12 -> {
+            drawableJPanel.componentMenuBarThread.disable();
+
+            Point sourcePoint = ((NonOrientedArrow) drawableJPanel.chosenComponent).sourcePoint;
+            Point targetPoint = ((NonOrientedArrow) drawableJPanel.chosenComponent).targetPoint;
+
+            for (int i = 0; i < drawableJPanel.graph.setOfArcs.size(); ++i) {
+                if (drawableJPanel.graph.setOfArcs.get(i).sourcePoint == sourcePoint
+                        && drawableJPanel.graph.setOfArcs.get(i).targetPoint == targetPoint) {
+                    try {
+                        drawableJPanel.graph.setOfArcs.get(i).weight = Integer.parseInt(textField.getText());
+                        ((NonOrientedArrow) drawableJPanel.chosenComponent).setWeight(Integer.parseInt(textField.getText()));
+                    } catch (NumberFormatException exception) {
+                        drawableJPanel.graph.setOfArcs.get(i).weight = 1;
+                        ((NonOrientedArrow) drawableJPanel.chosenComponent).setWeight(1);
+                    }
+                    break;
+                }
+            }
+
+            getWeightFrame.dispose();
+            drawableJPanel.revalidate();
+            drawableJPanel.repaint();
+            drawableJPanel.grabFocus();
+        });
+    }
+
+    private void deleteComponent() {
+        drawableJPanel.deleteChosenComponent();
+        drawableJPanel.componentMenuBarThread.disable();
+        drawableJPanel.grabFocus();
+    }
+
+    private void changeIdentifier(Dimension dimension) {
+        getIdentifierFrame = new JFrame("Set identifier");
+        getIdentifierFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        getIdentifierFrame.setResizable(false);
+        getIdentifierFrame.setLayout(new GridLayout(2, 0));
+        getIdentifierFrame.setPreferredSize(new Dimension(200, 100));
+        getIdentifierFrame.setVisible(true);
+        getIdentifierFrame.setLocation(dimension.width / 2 - 50, dimension.height / 2 - 50);
+
+        JButton OKButton = new JButton("Ok");
+        JTextField textField = new JTextField("");
+
+        textField.setSize(180, 80);
+
+        getIdentifierFrame.add(textField);
+        getIdentifierFrame.add(OKButton);
+        getIdentifierFrame.pack();
+
+        OKButton.addActionListener(e1 -> {
+            drawableJPanel.componentMenuBarThread.disable();
+            getIdentifierFrame.dispose();
+
+            Point point = ((Circle) drawableJPanel.chosenComponent).point;
+
+            Vertex vertex;
+            for (int i = 0; i < drawableJPanel.graph.setOfVertexes.size(); ++i) {
+                vertex = drawableJPanel.graph.setOfVertexes.get(i);
+                if (vertex.point.equals(point)) {
+                    drawableJPanel.graph.setOfVertexes.get(i).setIdentifier(textField.getText());
+                    ((Circle) drawableJPanel.chosenComponent).setIdentifier(textField.getText());
+                    break;
+                }
+            }
+            drawableJPanel.revalidate();
+            drawableJPanel.repaint();
+            drawableJPanel.grabFocus();
+        });
 
     }
 

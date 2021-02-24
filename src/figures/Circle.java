@@ -16,11 +16,11 @@ public class Circle extends JPanel {
     }
 
     public void draw(Graphics g) {
-        Graphics2D g2 = (Graphics2D) g;
-        g2.setStroke(new BasicStroke(3));
-        g2.setColor(color);
-        g2.drawOval(point.x - radius, point.y - radius, 2 * radius, 2 * radius);
-        g2.drawString(identifier, point.x + 15, point.y + 15);
+        Graphics2D graphics2D = (Graphics2D) g;
+        graphics2D.setStroke(new BasicStroke(3));
+        graphics2D.setColor(color);
+        graphics2D.drawOval(point.x - radius, point.y - radius, 2 * radius, 2 * radius);
+        graphics2D.drawString(identifier, point.x + 15, point.y + 15);
     }
 
     public void chooseObject() {

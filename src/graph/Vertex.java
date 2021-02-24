@@ -11,15 +11,14 @@ public class Vertex {
         this.identifier = "";
     }
 
-    Vertex(Point point, String identifier){
+    Vertex(Point point, String identifier) {
         this.point = point;
         this.identifier = identifier;
     }
 
-    public void setIdentifier(String identifier){
+    public void setIdentifier(String identifier) {
         this.identifier = identifier;
     }
-
 
 
 }

@@ -1,21 +1,16 @@
 package figures;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
 
 public class OrientedArrow extends NonOrientedArrow {
-
-    public OrientedArrow() {
-        super();
-    }
 
     public OrientedArrow(Point sourcePoint, Point targetPoint) {
         super(sourcePoint, targetPoint);
     }
-    public OrientedArrow(Point sourcePoint, Point targetPoint,int weight) {
-        super(sourcePoint, targetPoint,weight);
+
+    public OrientedArrow(Point sourcePoint, Point targetPoint, int weight) {
+        super(sourcePoint, targetPoint, weight);
     }
 
     @Override
@@ -73,7 +68,7 @@ public class OrientedArrow extends NonOrientedArrow {
 
     }
 
-    private void drawArrowLine(Graphics2D g, int x1, int y1, int x2, int y2, int arrowWidth, int arrowHeight) {
+    private void drawArrowLine(Graphics2D graphics2D, int x1, int y1, int x2, int y2, int arrowWidth, int arrowHeight) {
         int length = x2 - x1, height = y2 - y1;
         double distance = Math.sqrt(length * length + height * height);
         double xFirst = distance - arrowWidth, xSecond = xFirst, yFirst = arrowHeight, ySecond = -arrowHeight, x;
@@ -87,10 +82,10 @@ public class OrientedArrow extends NonOrientedArrow {
         ySecond = xSecond * sin + ySecond * cos + y1;
         xSecond = x;
 
-        int[] xpoints = {x2, (int) xFirst, (int) xSecond};
-        int[] ypoints = {y2, (int) yFirst, (int) ySecond};
+        int[] xPoints = {x2, (int) xFirst, (int) xSecond};
+        int[] yPoints = {y2, (int) yFirst, (int) ySecond};
         line = new Line2D.Double(x1, y1, x2, y2);
-        g.draw(line);
-        g.fillPolygon(xpoints, ypoints, 3);
+        graphics2D.draw(line);
+        graphics2D.fillPolygon(xPoints, yPoints, 3);
     }
 }

@@ -5,16 +5,18 @@ import figures.NonOrientedArrow;
 import figures.OrientedArrow;
 import graph.Arc;
 import graph.Vertex;
-import graph.tasks.FindHamiltonsCycle;
+import graph.tasks.FindHamiltonsCycles;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class MainGUI extends JFrame {
 
     //TODO made window in middle
+    //TODO handle exception circle move
 
     final static int radius = Circle.radius;
     final static int dx = 7;
@@ -111,13 +113,42 @@ public class MainGUI extends JFrame {
 
         JMenuItem graphTask = new JMenuItem("Graph task");
 
-        graphTask.addActionListener(e -> solveGraphTask());
+        graphTask.addActionListener(e -> new Thread(this::solveGraphTask).start());
         fileMenu.add(graphTask);
     }
 
     private void solveGraphTask() {
-        FindHamiltonsCycle findHamiltonsCycle = new FindHamiltonsCycle(drawableJPanel.graph);
-        findHamiltonsCycle.solveTask();
+        FindHamiltonsCycles hamiltonsCycle = new FindHamiltonsCycles(drawableJPanel.graph);
+        hamiltonsCycle.solveTask();
+
+        for(int i=0;i<hamiltonsCycle.hamiltonsCycles.size();++i){
+            ArrayList<Integer> cycle = hamiltonsCycle.hamiltonsCycles.get(i);
+
+            for (int currentVertex : cycle) {
+                int x = drawableJPanel.graph.setOfVertexes.get(currentVertex).point.x;
+                int y = drawableJPanel.graph.setOfVertexes.get(currentVertex).point.y;
+                Circle circle = drawableJPanel.findCircleTarget(x, y);
+                drawableJPanel.chooseComponent(circle);
+                drawableJPanel.paintImmediately(0,0,drawableJPanel.getWidth(),drawableJPanel.getHeight());
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException ignored) {
+
+                }
+            }
+            for (int currentVertex : cycle) {
+                int x = drawableJPanel.graph.setOfVertexes.get(currentVertex).point.x;
+                int y = drawableJPanel.graph.setOfVertexes.get(currentVertex).point.y;
+                Circle circle = drawableJPanel.findCircleTarget(x, y);
+                circle.rejectObject();
+            }
+            drawableJPanel.paintImmediately(0,0,drawableJPanel.getWidth(),drawableJPanel.getHeight());
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException ignored) {
+
+            }
+        }
     }
 
     private void saveToFile() {

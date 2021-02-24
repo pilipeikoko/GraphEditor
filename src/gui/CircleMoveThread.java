@@ -24,7 +24,7 @@ public class CircleMoveThread extends Thread {
         }
     }
 
-    public void disable(){
+    public void disable() {
         isActive = false;
         interrupt();
     }
