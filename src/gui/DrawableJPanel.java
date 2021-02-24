@@ -149,7 +149,6 @@ public class DrawableJPanel extends JPanel implements MouseListener {
                 Point sourcePoint = ((NonOrientedArrow) chosenComponent).sourcePoint;
                 Point targetPoint = ((NonOrientedArrow) chosenComponent).targetPoint;
                 graph.removeArc(sourcePoint, targetPoint);
-
             }
         }
     }

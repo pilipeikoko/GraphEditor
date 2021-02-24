@@ -7,7 +7,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class FindHamiltonsCycles implements GraphTasks {
+public class FindHamiltonsCycles implements GraphTask {
 
     private final Graph graph;
 

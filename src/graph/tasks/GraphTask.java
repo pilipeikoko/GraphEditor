@@ -1,6 +1,6 @@
 package graph.tasks;
 
-interface GraphTasks {
+interface GraphTask {
 
     void solveTask();
 }
