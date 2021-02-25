@@ -8,9 +8,8 @@ public class OrientedArrow extends NonOrientedArrow {
     public OrientedArrow(Point sourcePoint, Point targetPoint) {
         super(sourcePoint, targetPoint);
     }
-
-    public OrientedArrow(Point sourcePoint, Point targetPoint, int weight) {
-        super(sourcePoint, targetPoint, weight);
+    public OrientedArrow(Point sourcePoint, Point targetPoint,int weight) {
+        super(sourcePoint, targetPoint,weight);
     }
 
     @Override
@@ -82,10 +81,10 @@ public class OrientedArrow extends NonOrientedArrow {
         ySecond = xSecond * sin + ySecond * cos + y1;
         xSecond = x;
 
-        int[] xPoints = {x2, (int) xFirst, (int) xSecond};
-        int[] yPoints = {y2, (int) yFirst, (int) ySecond};
+        int[] xpoints = {x2, (int) xFirst, (int) xSecond};
+        int[] ypoints = {y2, (int) yFirst, (int) ySecond};
         line = new Line2D.Double(x1, y1, x2, y2);
         graphics2D.draw(line);
-        graphics2D.fillPolygon(xPoints, yPoints, 3);
+        graphics2D.fillPolygon(xpoints, ypoints, 3);
     }
 }

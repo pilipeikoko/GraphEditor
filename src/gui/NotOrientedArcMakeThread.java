@@ -43,10 +43,11 @@ public class NotOrientedArcMakeThread extends Thread {
                 return;
             }
         }
-        Point target = jPanel.findTarget();
+        Point target = jPanel.findTargetAtComponents();
         if (target == null) {
             jPanel.remove(arrow);
             interrupt();
+            return;
         }
 
         jPanel.remove(jPanel.getComponent(jPanel.getComponentCount() - 1));

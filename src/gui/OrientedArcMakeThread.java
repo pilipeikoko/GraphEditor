@@ -25,8 +25,10 @@ public class OrientedArcMakeThread extends NotOrientedArcMakeThread {
             try {
                 x = jPanel.getMousePosition().x;
                 y = jPanel.getMousePosition().y;
+
                 targetPoint.x = x;
                 targetPoint.y = y;
+
                 jPanel.revalidate();
                 jPanel.repaint();
             } catch (NullPointerException e) {
