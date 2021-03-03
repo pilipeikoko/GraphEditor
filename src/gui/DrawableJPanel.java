@@ -1,7 +1,10 @@
 package gui;
 
 import figures.Circle;
-import figures.NonOrientedArrow;
+import figures.Point;
+import graph.Vertex;
+import gui.figuresJComponents.CircleJComponent;
+import gui.figuresJComponents.NotOrientedArrowJComponent;
 import graph.Graph;
 
 import javax.swing.*;
@@ -61,7 +64,7 @@ public class DrawableJPanel extends JPanel implements MouseListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 killThreads();
-                gui.actionType = ActionType.MAKEVERTEX;
+                gui.actionType = ActionType.MAKE_VERTEX;
             }
         });
 
@@ -71,7 +74,7 @@ public class DrawableJPanel extends JPanel implements MouseListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 killThreads();
-                gui.actionType = ActionType.MAKEORIENTEDARC;
+                gui.actionType = ActionType.MAKE_ORIENTED_ARC;
             }
         });
 
@@ -82,7 +85,7 @@ public class DrawableJPanel extends JPanel implements MouseListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 killThreads();
-                gui.actionType = ActionType.MAKENOTORIENTEDARC;
+                gui.actionType = ActionType.MAKE_NOT_ORIENTED_ARC;
             }
         });
 
@@ -141,13 +144,13 @@ public class DrawableJPanel extends JPanel implements MouseListener {
 
             isComponentChosen = false;
 
-            if (chosenComponent instanceof Circle) {
-                Point point = ((Circle) chosenComponent).point;
+            if (chosenComponent instanceof CircleJComponent) {
+                Point point = ((CircleJComponent) chosenComponent).circle.point;
                 graph.removeVertex(point);
                 removeIncidentalArcs(point);
-            } else if (chosenComponent instanceof NonOrientedArrow) {
-                Point sourcePoint = ((NonOrientedArrow) chosenComponent).sourcePoint;
-                Point targetPoint = ((NonOrientedArrow) chosenComponent).targetPoint;
+            } else if (chosenComponent instanceof NotOrientedArrowJComponent) {
+                Point sourcePoint = ((NotOrientedArrowJComponent) chosenComponent).arrow.sourcePoint;
+                Point targetPoint = ((NotOrientedArrowJComponent) chosenComponent).arrow.targetPoint;
                 graph.removeArc(sourcePoint, targetPoint);
             }
         }
@@ -156,9 +159,9 @@ public class DrawableJPanel extends JPanel implements MouseListener {
     private void removeIncidentalArcs(Point point) {
         for (int i = 0; i < this.getComponentCount(); ++i) {
             Component component = this.getComponent(i);
-            if (component instanceof NonOrientedArrow
-                    && (((NonOrientedArrow) component).sourcePoint.equals(point)
-                    || ((NonOrientedArrow) component).targetPoint.equals(point))) {
+            if (component instanceof NotOrientedArrowJComponent
+                    && (((NotOrientedArrowJComponent) component).arrow.sourcePoint.equals(point)
+                    || ((NotOrientedArrowJComponent) component).arrow.targetPoint.equals(point))) {
                 this.remove(i--);
             }
         }
@@ -177,8 +180,9 @@ public class DrawableJPanel extends JPanel implements MouseListener {
     }
 
     Point findTarget() {
-        Point currentPoint = new Point(getMousePosition().x, getMousePosition().y);
-        for (var vertex : graph.setOfVertexes) {
+        java.awt.Point mousePosition = getMousePosition();
+        Point currentPoint = new Point(mousePosition.x, mousePosition.y);
+        for (Vertex vertex : graph.setOfVertexes) {
             Point point = vertex.point;
             if (Math.abs(point.x - currentPoint.x) <= radius && Math.abs(point.y - currentPoint.y) <= radius) {
                 return point;
@@ -188,11 +192,13 @@ public class DrawableJPanel extends JPanel implements MouseListener {
     }
 
     Point findTargetAtComponents() {
-        Point currentPoint = new Point(getMousePosition().x, getMousePosition().y);
+        java.awt.Point mousePosition = new java.awt.Point(getMousePosition().x, getMousePosition().y);
+
+        Point currentPoint = new Point(mousePosition.x, mousePosition.y);
         for (int i = 0; i < this.getComponentCount(); ++i) {
             Component component = this.getComponent(i);
-            if (component instanceof Circle) {
-                Point point = ((Circle) component).point;
+            if (component instanceof CircleJComponent) {
+                Point point = ((CircleJComponent) component).circle.point;
                 if (Math.abs(point.x - currentPoint.x) <= radius && Math.abs(point.y - currentPoint.y) <= radius) {
                     return point;
                 }
@@ -202,17 +208,17 @@ public class DrawableJPanel extends JPanel implements MouseListener {
     }
 
     private int findIndexOfTarget() {
-        Point currentPoint = new Point(getMousePosition().x, getMousePosition().y);
+        java.awt.Point currentPoint = new java.awt.Point(getMousePosition().x, getMousePosition().y);
         for (int i = 0; i < getComponentCount(); i++) {
             Component component = getComponent(i);
-            if (component instanceof Circle) {
-                Point point = ((Circle) component).point;
+            if (component instanceof CircleJComponent) {
+                Point point = ((CircleJComponent) component).circle.point;
                 if (Math.abs(point.x - currentPoint.x) <= radius
                         && Math.abs(point.y - currentPoint.y) <= radius) {
                     return i;
                 }
-            } else if (component instanceof NonOrientedArrow) {
-                Line2D line = ((NonOrientedArrow) component).line;
+            } else if (component instanceof NotOrientedArrowJComponent) {
+                Line2D line = ((NotOrientedArrowJComponent) component).line;
                 if (line.ptSegDist(currentPoint) < 10) {
                     return i;
                 }
@@ -226,14 +232,14 @@ public class DrawableJPanel extends JPanel implements MouseListener {
         this.grabFocus();
 
         Point point = new Point(x, y);
-        Circle circle = new Circle(point);
-        circle.setIdentifier(identifier);
+        CircleJComponent circleJComponent = new CircleJComponent(point);
+        circleJComponent.setIdentifier(identifier);
 
-        this.add(circle);
+        this.add(circleJComponent);
         graph.addVertex(point, identifier);
 
         rejectComponent();
-        chooseComponent(circle);
+        chooseComponent(circleJComponent);
     }
 
     private void createVertex() {
@@ -243,24 +249,24 @@ public class DrawableJPanel extends JPanel implements MouseListener {
         this.grabFocus();
 
         Point point = new Point(x, y);
-        Circle circle = new Circle(point);
+        CircleJComponent circleJComponent = new CircleJComponent(point);
 
-        this.add(circle);
+        this.add(circleJComponent);
         graph.addVertex(point);
 
         rejectComponent();
-        chooseComponent(circle);
+        chooseComponent(circleJComponent);
     }
 
 
     void rejectComponent() {
         isComponentChosen = false;
-        if (chosenComponent instanceof Circle) {
-            Circle circle = (Circle) chosenComponent;
-            circle.rejectObject();
-        } else if (chosenComponent instanceof NonOrientedArrow) {
-            NonOrientedArrow nonOrientedArrow = (NonOrientedArrow) chosenComponent;
-            nonOrientedArrow.rejectObject();
+        if (chosenComponent instanceof CircleJComponent) {
+            CircleJComponent circleJComponent = (CircleJComponent) chosenComponent;
+            circleJComponent.rejectObject();
+        } else if (chosenComponent instanceof NotOrientedArrowJComponent) {
+            NotOrientedArrowJComponent notOrientedArrowJComponent = (NotOrientedArrowJComponent) chosenComponent;
+            notOrientedArrowJComponent.rejectObject();
         }
         revalidate();
         repaint();
@@ -268,14 +274,14 @@ public class DrawableJPanel extends JPanel implements MouseListener {
 
     void chooseComponent(Component component) {
         isComponentChosen = true;
-        if (component instanceof Circle) {
-            Circle circle = (Circle) component;
-            circle.chooseObject();
-            chosenComponent = circle;
-        } else if (component instanceof NonOrientedArrow) {
-            NonOrientedArrow nonOrientedArrow = (NonOrientedArrow) component;
-            nonOrientedArrow.chooseObject();
-            chosenComponent = nonOrientedArrow;
+        if (component instanceof CircleJComponent) {
+            CircleJComponent circleJComponent = (CircleJComponent) component;
+            circleJComponent.chooseObject();
+            chosenComponent = circleJComponent;
+        } else if (component instanceof NotOrientedArrowJComponent) {
+            NotOrientedArrowJComponent notOrientedArrowJComponent = (NotOrientedArrowJComponent) component;
+            notOrientedArrowJComponent.chooseObject();
+            chosenComponent = notOrientedArrowJComponent;
         }
         revalidate();
         repaint();
@@ -287,10 +293,10 @@ public class DrawableJPanel extends JPanel implements MouseListener {
             circleMoveThread.disable();
         } else if (notOrientedArcMakeThread != null && notOrientedArcMakeThread.isAlive()) {
             notOrientedArcMakeThread.disable();
-            actionType = ActionType.MAKEVERTEX;
+            actionType = ActionType.MAKE_VERTEX;
         } else if (orientedArcMakeThread != null && orientedArcMakeThread.isAlive()) {
             orientedArcMakeThread.disable();
-            actionType = ActionType.MAKEVERTEX;
+            actionType = ActionType.MAKE_VERTEX;
         }
     }
 
@@ -313,15 +319,14 @@ public class DrawableJPanel extends JPanel implements MouseListener {
         super.paintComponent(g);
 
         for (int i = 0; i < this.getComponentCount(); i++) {
-            if (this.getComponent(i) instanceof Circle) {
-                Circle component = (Circle) this.getComponent(i);
+            if (this.getComponent(i) instanceof CircleJComponent) {
+                CircleJComponent component = (CircleJComponent) this.getComponent(i);
                 component.draw(g);
-            } else if (this.getComponent(i) instanceof NonOrientedArrow) {
-                NonOrientedArrow component = (NonOrientedArrow) this.getComponent(i);
+            } else if (this.getComponent(i) instanceof NotOrientedArrowJComponent) {
+                NotOrientedArrowJComponent component = (NotOrientedArrowJComponent) this.getComponent(i);
                 component.draw(g);
             }
         }
-
     }
 
     private void createNotOrientedArrow() {
@@ -348,13 +353,13 @@ public class DrawableJPanel extends JPanel implements MouseListener {
     @Override
     public void mouseClicked(MouseEvent e) {
         switch (actionType) {
-            case MAKEVERTEX -> {
+            case MAKE_VERTEX -> {
                 if (e.getClickCount() == 2) {
                     createVertex();
                 }
             }
-            case MAKENOTORIENTEDARC -> createNotOrientedArrow();
-            case MAKEORIENTEDARC -> createOrientedArrow();
+            case MAKE_NOT_ORIENTED_ARC -> createNotOrientedArrow();
+            case MAKE_ORIENTED_ARC -> createOrientedArrow();
         }
     }
 
@@ -363,7 +368,7 @@ public class DrawableJPanel extends JPanel implements MouseListener {
         actionType = gui.actionType;
         killMenuThread();
 
-        if (actionType == ActionType.MAKEVERTEX) {
+        if (actionType == ActionType.MAKE_VERTEX) {
             moveVertex();
             changeChosenComponent();
 
@@ -376,23 +381,24 @@ public class DrawableJPanel extends JPanel implements MouseListener {
     Point findTarget(int x, int y) {
         Point point = new Point(x, y);
         for (int i = 0; i < this.getComponentCount(); i++) {
-            if (this.getComponent(i) instanceof Circle) {
-                Circle circle = (Circle) this.getComponent(i);
-                if (circle.point.equals(point)) {
-                    return circle.point;
+            if (this.getComponent(i) instanceof CircleJComponent) {
+                CircleJComponent circleJComponent = (CircleJComponent) this.getComponent(i);
+                if (circleJComponent.circle.point.x == point.x && circleJComponent.circle.point.y == point.y) {
+                    return circleJComponent.circle.point;
                 }
             }
         }
+        grabFocus();
         return null;
     }
 
-    Circle findCircleTarget(int x, int y) {
+    CircleJComponent findCircleTarget(int x, int y) {
         Point point = new Point(x, y);
         for (int i = 0; i < this.getComponentCount(); i++) {
-            if (this.getComponent(i) instanceof Circle) {
-                Circle circle = (Circle) this.getComponent(i);
-                if (circle.point.equals(point)) {
-                    return circle;
+            if (this.getComponent(i) instanceof CircleJComponent) {
+                CircleJComponent circleJComponent = (CircleJComponent) this.getComponent(i);
+                if (circleJComponent.circle.point.x == point.x && circleJComponent.circle.point.y == point.y) {
+                    return circleJComponent;
                 }
             }
         }

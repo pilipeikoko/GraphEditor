@@ -1,11 +1,8 @@
 package graph.tasks;
 
-import graph.Arc;
 import graph.Graph;
 
-import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class FindHamiltonsCycles implements GraphTask {
 
@@ -18,34 +15,7 @@ public class FindHamiltonsCycles implements GraphTask {
     public FindHamiltonsCycles(Graph graph) {
         this.graph = graph;
 
-        matrix = new int[graph.setOfVertexes.size()][graph.setOfVertexes.size()];
-
-
-        for (int[] row : matrix) {
-            Arrays.fill(row, 0);
-        }
-
-        for (int i = 0; i < graph.setOfArcs.size(); ++i) {
-            Arc arc = graph.setOfArcs.get(i);
-
-            int sourceIndex = findIndexOfVertex(arc.sourcePoint);
-            int targetIndex = findIndexOfVertex(arc.targetPoint);
-
-            boolean isDirected = arc.isDirected;
-
-            matrix[sourceIndex][targetIndex] = 1;
-            if (!isDirected) {
-                matrix[targetIndex][sourceIndex] = 1;
-            }
-        }
-    }
-
-    private int findIndexOfVertex(Point point) {
-        for (int i = 0; i < graph.setOfVertexes.size(); ++i) {
-            if (graph.setOfVertexes.get(i).point == point)
-                return i;
-        }
-        return -1;
+        matrix = graph.getMatrix();
     }
 
     @Override

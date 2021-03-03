@@ -1,14 +1,14 @@
 package gui;
 
-import figures.OrientedArrow;
+import figures.Point;
+import gui.figuresJComponents.OrientedArrowJComponent;
 import graph.Arc;
-
-import java.awt.*;
 
 public class OrientedArcMakeThread extends NotOrientedArcMakeThread {
 
     OrientedArcMakeThread(DrawableJPanel panel, Point point) {
         super(panel, point);
+
     }
 
     @Override
@@ -17,7 +17,7 @@ public class OrientedArcMakeThread extends NotOrientedArcMakeThread {
         int y = jPanel.getMousePosition().y;
 
         Point targetPoint = new Point(x, y);
-        OrientedArrow arrow = new OrientedArrow(sourcePoint, targetPoint);
+        OrientedArrowJComponent arrow = new OrientedArrowJComponent(sourcePoint, targetPoint);
 
         jPanel.add(arrow);
 
@@ -44,7 +44,7 @@ public class OrientedArcMakeThread extends NotOrientedArcMakeThread {
             return;
         }
         jPanel.remove(jPanel.getComponent(jPanel.getComponentCount() - 1));
-        arrow = new OrientedArrow(sourcePoint, target);
+        arrow = new OrientedArrowJComponent(sourcePoint, target);
         jPanel.add(arrow);
 
         arrow.changeTarget(target);

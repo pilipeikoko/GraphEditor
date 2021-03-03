@@ -1,11 +1,12 @@
 package gui;
 
 import figures.Circle;
-import figures.NonOrientedArrow;
-import figures.OrientedArrow;
+import figures.Point;
+import gui.figuresJComponents.CircleJComponent;
+import gui.figuresJComponents.NotOrientedArrowJComponent;
+import gui.figuresJComponents.OrientedArrowJComponent;
 import graph.Arc;
 import graph.Vertex;
-import graph.tasks.FindHamiltonsCycles;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,14 +18,11 @@ import java.util.Scanner;
 
 public class MainGUI extends JFrame implements ComponentListener {
 
-    //TODO make window in middle
-    //TODO handle exception circle move
-
     final static int radius = Circle.radius;
     final static int dx = 7;
     final static int dy = 30;
 
-    ActionType actionType = ActionType.MAKEVERTEX;
+    ActionType actionType = ActionType.MAKE_VERTEX;
 
     private DrawableJPanel drawableJPanel;
 
@@ -74,21 +72,21 @@ public class MainGUI extends JFrame implements ComponentListener {
 
         JButton vertexButton = new JButton(new ImageIcon("src\\gui\\pictures\\makeVertex.png"));
         vertexButton.addActionListener(e -> {
-            actionType = ActionType.MAKEVERTEX;
+            actionType = ActionType.MAKE_VERTEX;
             drawableJPanel.grabFocus();
         });
         toolbar.add(vertexButton);
 
         JButton orientedArcButton = new JButton(new ImageIcon("src\\gui\\pictures\\makeArcOriented.png"));
         orientedArcButton.addActionListener(event -> {
-            actionType = ActionType.MAKEORIENTEDARC;
+            actionType = ActionType.MAKE_ORIENTED_ARC;
             drawableJPanel.grabFocus();
         });
         toolbar.add(orientedArcButton);
 
         JButton notOrientedArcButton = new JButton(new ImageIcon("src\\gui\\pictures\\makeArcNotOriented.png"));
         notOrientedArcButton.addActionListener(event -> {
-            actionType = ActionType.MAKENOTORIENTEDARC;
+            actionType = ActionType.MAKE_NOT_ORIENTED_ARC;
             drawableJPanel.grabFocus();
         });
         toolbar.add(notOrientedArcButton);
@@ -124,47 +122,46 @@ public class MainGUI extends JFrame implements ComponentListener {
 
         JMenuItem graphTask = new JMenuItem("Find all possible Hamilton's cycles");
 
-        graphTask.addActionListener(e -> new Thread(this::solveGraphTask).start());
+        graphTask.addActionListener(e -> new Thread(this::findAllHamiltonsCycles).start());
         graphTasksMenu.add(graphTask);
     }
 
-    private void solveGraphTask() {
+    private void findAllHamiltonsCycles() {
         drawableJPanel.rejectComponent();
 
-        FindHamiltonsCycles hamiltonsCycle = new FindHamiltonsCycles(drawableJPanel.graph);
-        hamiltonsCycle.solveTask();
 
-        for (int i = 0; i < hamiltonsCycle.hamiltonsCycles.size(); ++i) {
-            ArrayList<Integer> cycle = hamiltonsCycle.hamiltonsCycles.get(i);
+        ArrayList<ArrayList<Integer>> hamiltonsCycles = drawableJPanel.graph.findAllHamiltonsCycles();
 
-            for (int currentVertex : cycle) {
+        for (ArrayList<Integer> cycle : hamiltonsCycles) {
+            for (int indexOfCurrentVertex : cycle) {
 
-                int x = drawableJPanel.graph.setOfVertexes.get(currentVertex).point.x;
-                int y = drawableJPanel.graph.setOfVertexes.get(currentVertex).point.y;
+                int x = drawableJPanel.graph.setOfVertexes.get(indexOfCurrentVertex).point.x;
+                int y = drawableJPanel.graph.setOfVertexes.get(indexOfCurrentVertex).point.y;
 
-                Circle circle = drawableJPanel.findCircleTarget(x, y);
+                CircleJComponent circleJComponent = drawableJPanel.findCircleTarget(x, y);
 
-                drawableJPanel.chooseComponent(circle);
+                drawableJPanel.chooseComponent(circleJComponent);
                 drawableJPanel.paintImmediately(0, 0, drawableJPanel.getWidth(), drawableJPanel.getHeight());
 
                 try {
                     Thread.sleep(500);
-                } catch (InterruptedException ignored) {
-
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
             for (int currentVertex : cycle) {
                 int x = drawableJPanel.graph.setOfVertexes.get(currentVertex).point.x;
                 int y = drawableJPanel.graph.setOfVertexes.get(currentVertex).point.y;
 
-                Circle circle = drawableJPanel.findCircleTarget(x, y);
-                circle.rejectObject();
+                CircleJComponent circleJComponent = drawableJPanel.findCircleTarget(x, y);
+                circleJComponent.rejectObject();
             }
             drawableJPanel.paintImmediately(0, 0, drawableJPanel.getWidth(), drawableJPanel.getHeight());
 
             try {
                 Thread.sleep(2000);
-            } catch (InterruptedException ignored) {
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -177,8 +174,8 @@ public class MainGUI extends JFrame implements ComponentListener {
 
             try {
                 pushAllInfo(fileChooser);
-            } catch (IOException ignored) {
-
+            } catch (IOException e) {
+                e.printStackTrace();
             }
 
         }
@@ -198,8 +195,8 @@ public class MainGUI extends JFrame implements ComponentListener {
         stringBuilder.append(amountOfArcs).append("\n");
         fileWriter.write(stringBuilder.toString(), 0, stringBuilder.toString().length());
 
-        pushVertexes(amountOfVertexes,stringBuilder,fileWriter);
-        pushArcs(amountOfArcs,stringBuilder,fileWriter);
+        pushVertexes(amountOfVertexes, stringBuilder, fileWriter);
+        pushArcs(amountOfArcs, stringBuilder, fileWriter);
 
         fileWriter.close();
     }
@@ -225,7 +222,7 @@ public class MainGUI extends JFrame implements ComponentListener {
         }
     }
 
-    private void pushVertexes(int amountOfVertexes,StringBuilder stringBuilder,FileWriter fileWriter) throws IOException {
+    private void pushVertexes(int amountOfVertexes, StringBuilder stringBuilder, FileWriter fileWriter) throws IOException {
         for (int i = 0; i < amountOfVertexes; ++i) {
             Vertex vertex = drawableJPanel.graph.setOfVertexes.get(i);
             stringBuilder.delete(0, stringBuilder.length());
@@ -269,16 +266,16 @@ public class MainGUI extends JFrame implements ComponentListener {
             if (scanner.hasNextInt())
                 amountOfArcs = scanner.nextInt();
 
-            addALlVertexes(amountOfVertexes,scanner);
-            addAllArcs(amountOfArcs,scanner);
+            addALlVertexes(amountOfVertexes, scanner);
+            addAllArcs(amountOfArcs, scanner);
 
             fileReader.close();
             revalidate();
             repaint();
             drawableJPanel.grabFocus();
 
-        } catch (IOException ignored) {
-
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -299,9 +296,9 @@ public class MainGUI extends JFrame implements ComponentListener {
             drawableJPanel.graph.addArc(new Arc(sourcePoint, targetPoint, isDirected, weight));
 
             if (isDirected)
-                drawableJPanel.add(new OrientedArrow(sourcePoint, targetPoint, weight));
+                drawableJPanel.add(new OrientedArrowJComponent(sourcePoint, targetPoint, weight));
             else
-                drawableJPanel.add(new NonOrientedArrow(sourcePoint, targetPoint, weight));
+                drawableJPanel.add(new NotOrientedArrowJComponent(sourcePoint, targetPoint, weight));
 
         }
     }
@@ -324,7 +321,7 @@ public class MainGUI extends JFrame implements ComponentListener {
 
     @Override
     public void componentResized(ComponentEvent e) {
-        toolbar.setSize(40,this.getHeight());
+        toolbar.setSize(40, this.getHeight());
         scrollPane.setSize(new Dimension(this.getWidth() - 60, this.getHeight() - 70));
         revalidate();
         repaint();

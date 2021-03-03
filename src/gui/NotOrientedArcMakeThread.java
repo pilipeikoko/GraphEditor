@@ -1,9 +1,8 @@
 package gui;
 
-import figures.NonOrientedArrow;
+import figures.Point;
+import gui.figuresJComponents.NotOrientedArrowJComponent;
 import graph.Arc;
-
-import java.awt.*;
 
 public class NotOrientedArcMakeThread extends Thread {
 
@@ -24,7 +23,7 @@ public class NotOrientedArcMakeThread extends Thread {
         int y = jPanel.getMousePosition().y;
 
         Point targetPoint = new Point(x, y);
-        NonOrientedArrow arrow = new NonOrientedArrow(sourcePoint, targetPoint);
+        NotOrientedArrowJComponent arrow = new NotOrientedArrowJComponent(sourcePoint, targetPoint);
         jPanel.add(arrow);
 
         while (isActive) {
@@ -51,7 +50,7 @@ public class NotOrientedArcMakeThread extends Thread {
         }
 
         jPanel.remove(jPanel.getComponent(jPanel.getComponentCount() - 1));
-        arrow = new NonOrientedArrow(sourcePoint, target);
+        arrow = new NotOrientedArrowJComponent(sourcePoint, target);
         jPanel.add(arrow);
 
         arrow.changeTarget(target);

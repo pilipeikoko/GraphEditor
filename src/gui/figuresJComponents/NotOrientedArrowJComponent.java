@@ -1,34 +1,34 @@
-package figures;
+package gui.figuresJComponents;
+
+import figures.Circle;
+import figures.Arrow;
+import figures.Point;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Line2D;
 
-public class NonOrientedArrow extends JPanel {
-    protected static int radius = Circle.radius;
+public class NotOrientedArrowJComponent extends JComponent {
+    public Arrow arrow;
     protected Color color;
     protected boolean isFinish = false;
 
     public Line2D line;
-    public Point sourcePoint;
-    public Point targetPoint;
 
     int weight;
 
-    public NonOrientedArrow() {
+    public NotOrientedArrowJComponent() {
 
     }
 
-    public NonOrientedArrow(Point sourcePoint, Point targetPoint) {
-        this.sourcePoint = sourcePoint;
-        this.targetPoint = targetPoint;
+    public NotOrientedArrowJComponent(Point sourcePoint, Point targetPoint) {
+        this.arrow = new Arrow(sourcePoint, targetPoint, false);
         this.color = Color.black;
         this.weight = 1;
     }
 
-    public NonOrientedArrow(Point sourcePoint, Point targetPoint, int weight) {
-        this.sourcePoint = sourcePoint;
-        this.targetPoint = targetPoint;
+    public NotOrientedArrowJComponent(Point sourcePoint, Point targetPoint, int weight) {
+        this.arrow = new Arrow(sourcePoint, targetPoint, false);
         this.color = Color.black;
         this.weight = weight;
         isFinish = true;
@@ -38,6 +38,10 @@ public class NonOrientedArrow extends JPanel {
         Graphics2D graphics2D = (Graphics2D) g;
         graphics2D.setStroke(new BasicStroke(3));
         graphics2D.setColor(color);
+
+        Point targetPoint = arrow.targetPoint;
+        Point sourcePoint = arrow.sourcePoint;
+        int radius = Circle.radius;
 
         double k = (double) (targetPoint.y - sourcePoint.y) / (targetPoint.x - sourcePoint.x);
 
@@ -83,7 +87,7 @@ public class NonOrientedArrow extends JPanel {
 
     public void changeTarget(Point point) {
         isFinish = true;
-        this.targetPoint = point;
+        this.arrow.targetPoint = point;
     }
 
     public void chooseObject() {

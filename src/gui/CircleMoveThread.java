@@ -1,6 +1,6 @@
 package gui;
 
-import java.awt.*;
+import figures.Point;
 
 public class CircleMoveThread extends Thread {
 
@@ -17,15 +17,19 @@ public class CircleMoveThread extends Thread {
 
     @Override
     public void run() {
-        try {
-            while (isActive) {
-                point.move(jPanel.getMousePosition().x, jPanel.getMousePosition().y);
+
+        while (isActive) {
+
+            java.awt.Point mousePosition = jPanel.getMousePosition();
+
+            if (mousePosition != null) {
+                point.x = mousePosition.x;
+                point.y = mousePosition.y;
                 jPanel.revalidate();
                 jPanel.repaint();
             }
-        } catch (NullPointerException ignored){
-
         }
+
     }
 
     public void disable() {

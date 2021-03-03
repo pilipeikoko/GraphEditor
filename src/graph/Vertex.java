@@ -1,6 +1,6 @@
 package graph;
 
-import java.awt.*;
+import figures.Point;
 
 public class Vertex {
     public String identifier;

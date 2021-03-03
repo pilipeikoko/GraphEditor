@@ -1,15 +1,21 @@
-package figures;
+package gui.figuresJComponents;
+
+import figures.Circle;
+import figures.Point;
 
 import java.awt.*;
 import java.awt.geom.Line2D;
 
-public class OrientedArrow extends NonOrientedArrow {
+public class OrientedArrowJComponent extends NotOrientedArrowJComponent {
 
-    public OrientedArrow(Point sourcePoint, Point targetPoint) {
+    public OrientedArrowJComponent(Point sourcePoint, Point targetPoint) {
         super(sourcePoint, targetPoint);
+        arrow.isDirected = true;
     }
-    public OrientedArrow(Point sourcePoint, Point targetPoint,int weight) {
-        super(sourcePoint, targetPoint,weight);
+
+    public OrientedArrowJComponent(Point sourcePoint, Point targetPoint, int weight) {
+        super(sourcePoint, targetPoint, weight);
+        arrow.isDirected = true;
     }
 
     @Override
@@ -21,6 +27,10 @@ public class OrientedArrow extends NonOrientedArrow {
         Graphics2D g2 = (Graphics2D) g;
         g2.setStroke(new BasicStroke(3));
         g2.setColor(color);
+
+        Point targetPoint = arrow.targetPoint;
+        Point sourcePoint = arrow.sourcePoint;
+        int radius = Circle.radius;
 
         double k = (double) (targetPoint.y - sourcePoint.y) / (targetPoint.x - sourcePoint.x);
 
@@ -44,13 +54,12 @@ public class OrientedArrow extends NonOrientedArrow {
             targetDy = sourcePoint.y > targetPoint.y ? targetPoint.y + radius : targetPoint.y - radius;
             targetDx = targetPoint.x;
         }
-        if (isFinish)
-            drawArrowLine(g2, sourceDx, sourceDy, targetDx, targetDy, 10, 5);
-        else {
+        if (!isFinish) {
             targetDx = targetPoint.x;
             targetDy = targetPoint.y;
-            drawArrowLine(g2, sourceDx, sourceDy, targetDx, targetDy, 10, 5);
         }
+
+        drawArrowLine(g2, sourceDx, sourceDy, targetDx, targetDy, 10, 5);
         line = new Line2D.Double(sourcePoint.x, sourcePoint.y, targetPoint.x, targetPoint.y);
 
 

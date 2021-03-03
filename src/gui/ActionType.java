@@ -1,7 +1,7 @@
 package gui;
 
 public enum ActionType {
-    MAKENOTORIENTEDARC,
-    MAKEVERTEX,
-    MAKEORIENTEDARC
+    MAKE_NOT_ORIENTED_ARC,
+    MAKE_VERTEX,
+    MAKE_ORIENTED_ARC
 }

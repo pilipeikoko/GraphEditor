@@ -1,11 +1,15 @@
 package graph;
 
-import java.awt.*;
+import figures.Point;
+import graph.tasks.FindHamiltonsCycles;
+
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Graph {
-    public ArrayList<Vertex> setOfVertexes = new ArrayList<>();
-    public ArrayList<Arc> setOfArcs = new ArrayList<>();
+    public List<Vertex> setOfVertexes = new ArrayList<>();
+    public List<Arc> setOfArcs = new ArrayList<>();
 
     public Graph() {
 
@@ -57,5 +61,42 @@ public class Graph {
             }
         }
     }
+
+    public int[][] getMatrix() {
+        int[][] matrix;
+        matrix = new int[setOfVertexes.size()][setOfVertexes.size()];
+
+        for (int[] row : matrix) {
+            Arrays.fill(row, 0);
+        }
+
+        for (Arc arc : setOfArcs) {
+            int sourceIndex = findIndexOfVertex(arc.sourcePoint);
+            int targetIndex = findIndexOfVertex(arc.targetPoint);
+
+            boolean isDirected = arc.isDirected;
+
+            matrix[sourceIndex][targetIndex] = 1;
+            if (!isDirected) {
+                matrix[targetIndex][sourceIndex] = 1;
+            }
+        }
+        return matrix;
+    }
+
+    private int findIndexOfVertex(Point point) {
+        for (int i = 0; i < setOfVertexes.size(); ++i) {
+            if (setOfVertexes.get(i).point == point)
+                return i;
+        }
+        return -1;
+    }
+
+    public ArrayList<ArrayList<Integer>> findAllHamiltonsCycles() {
+        FindHamiltonsCycles findHamiltonsCycles = new FindHamiltonsCycles(this);
+        findHamiltonsCycles.solveTask();
+        return findHamiltonsCycles.hamiltonsCycles;
+    }
+
 
 }
